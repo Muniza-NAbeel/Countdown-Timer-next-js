@@ -1,99 +1,90 @@
 "use client";
 
-import {useState, useRef, useEffect, ChangeEvent} from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useState, useRef, useEffect, ChangeEvent } from "react";
+import { Input } from "@/components/ui/input"; // Custom Input Component
+import { Button } from "@/components/ui/button"; // Custom Button Component
 
-export default function Countdown(){
-   const [duration, setDuration] = useState<number | string> ("");
-   const [timeLeft, setTimeLeft] = useState<number>(0);
-   const [isActive, setIsActive] = useState<boolean>(false);
-   const [isPaused, setIsPaused] = useState<boolean>(false);
-   const timerRef = useRef<NodeJS.Timeout | null>(null);
+export default function Countdown() {
+  const [duration, setDuration] = useState<number | string>("");
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-   const handleSetDuration = (): void =>{
-    if(typeof duration === "number" && duration >0){
-        setTimeLeft(duration);
-        setIsActive(false);
-        setIsPaused(false);
-        if(timerRef.current){
-            clearInterval(timerRef.current);
-        }
-     }
-   };
+  const handleSetDuration = (): void => {
+    if (typeof duration === "number" && duration > 0) {
+      setTimeLeft(duration);
+      setIsActive(false);
+      setIsPaused(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    }
+  };
 
-   const handleStart = (): void =>{
-     if(timeLeft > 0){
-        setIsActive(true);
-        setIsPaused(false);
-     }
-   };
+  const handleStart = (): void => {
+    if (timeLeft > 0) {
+      setIsActive(true);
+      setIsPaused(false);
+    }
+  };
 
-   const handlePause = (): void => {
-       if(isActive){
-        setIsPaused(true);
-        setIsActive(false);
-         if(timerRef.current){
-            clearInterval(timerRef.current)
-        }
-       }
-   };
+  const handlePause = (): void => {
+    if (isActive) {
+      setIsPaused(true);
+      setIsActive(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    }
+  };
 
-    const handleReset = (): void => {
-        setIsActive(false);
-        setIsPaused(false);
-        setTimeLeft(typeof duration === "number" ? duration : 0);
-         if(timerRef.current){
-           clearInterval(timerRef.current);
-       }
-   };
+  const handleReset = (): void => {
+    setIsActive(false);
+    setIsPaused(false);
+    setTimeLeft(typeof duration === "number" ? duration : 0);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+  };
 
-   useEffect(() => {
-    if(isActive && !isPaused){
-        timerRef.current = setInterval(() =>{
-            setTimeLeft((prevTime) => {
-                if(prevTime <= 1) {
-                    clearInterval(timerRef.current!);
-                    return 0;
-                }
-                return prevTime -1; 
-            });
-        }, 1000);
+  useEffect(() => {
+    if (isActive && !isPaused) {
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timerRef.current!);
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
     }
     return () => {
-        if(timerRef.current){
-            clearInterval(timerRef.current)
-        }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     };
-   }, [isActive, isPaused]);
-   
-   const formatTime = (time: number): string => {
-    const minutes = Math.floor(time/60);
-    const seconds = time % 60 ;
-    return `${String(minutes).padStart(2, "0")}: ${String(seconds).padStart(2,"0")}`
-   };
+  }, [isActive, isPaused]);
 
-   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  };
+
+  const handleDurationChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setDuration(Number(e.target.value) || "");
-   };
+  };
 
-   return (
-    // Container div for centering the content
-
+  return (
     <div className="flex flex-col items-center justify-center h-screen bg-slate-300 dark:bg-gray-900">
-  
-      {/* Timer box container */}
       <div className="bg-slate-100 dark:bg-gray-800 shadow-2xl rounded-2xl p-8 w-full max-w-md">
-
-  
-        {/* Title of the countdown timer */}
         <h1 className="text-2xl font-bold mb-5 text-gray-700 dark:text-gray-200 text-center">
           Countdown Timer
         </h1>
-  
-        {/* Input and set button container */}
         <div className="flex items-center mb-6">
-          <input
+          <Input
             type="number"
             id="duration"
             placeholder="Enter duration in seconds"
@@ -101,42 +92,35 @@ export default function Countdown(){
             onChange={handleDurationChange}
             className="flex-1 mr-5 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 w-80 h-9"
           />
-          <button
+          <Button
             onClick={handleSetDuration}
-            className="text-gray-800 dark:text-gray-200 border rounded-xl px-4 py-2 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-black active:bg-gray-400 dark:active:bg-gray-700 active:scale-95">
-
-             Set
-          </button>
-
+            className="text-gray-800 dark:text-gray-200 border rounded-xl px-4 py-2 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-black active:bg-gray-400 dark:active:bg-gray-700 active:scale-95"
+          >
+            Set
+          </Button>
         </div>
-  
-        {/* Display the formatted time left */}
         <div className="text-6xl font-bold text-gray-800 dark:text-gray-200 mb-8 text-center">
           {formatTime(timeLeft)}
         </div>
-  
-        {/* Buttons to start, pause, and reset the timer */}
         <div className="flex justify-center gap-4">
-          <button
+          <Button
             onClick={handleStart}
             className="text-gray-800 dark:text-gray-200 border rounded-xl px-4 py-2 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-black active:bg-gray-400 dark:active:bg-gray-700 active:scale-95"
-            >          
+          >
             {isPaused ? "Resume" : "Start"}
-          </button>
-  
-          <button
+          </Button>
+          <Button
             onClick={handlePause}
             className="text-gray-800 dark:text-gray-200 border rounded-xl px-4 py-2 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-black active:bg-gray-400 dark:active:bg-gray-700 active:scale-95"
-           >
+          >
             Pause
-          </button>
-  
-          <button
+          </Button>
+          <Button
             onClick={handleReset}
             className="text-gray-800 dark:text-gray-200 border rounded-xl px-4 py-2 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-black active:bg-gray-400 dark:active:bg-gray-700 active:scale-95"
-            >
+          >
             Reset
-          </button>
+          </Button>
         </div>
       </div>
     </div>
